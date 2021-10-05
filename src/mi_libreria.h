@@ -12,7 +12,7 @@
 #include "stm32f4xx_syscfg.h"
 #include "stm32f4xx_dac.h"
 #include "stm32f4xx_dma.h"
-
+#include "stm32f4xx_usart.h"
 
 //--------------------------------------------------------------
 // Defines
@@ -118,5 +118,8 @@ void INIT_DAC_CONT(GPIO_TypeDef* , uint16_t);
 void DAC_CONT(GPIO_TypeDef*, uint16_t, int16_t);
 void INIT_DAC_SINE(GPIO_TypeDef*, uint16_t);
 void DAC_SINE32BIT(GPIO_TypeDef*, uint16_t, const uint16_t * ,uint32_t );
+
+void INIT_USART_RX(GPIO_TypeDef*, uint16_t);
+void INIT_USART_TX(GPIO_TypeDef*, uint16_t);
 
 #endif //mi_libreria_H

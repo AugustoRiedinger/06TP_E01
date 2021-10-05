@@ -986,6 +986,126 @@ void DAC_SINE32BIT(GPIO_TypeDef* Port, uint16_t Pin, const uint16_t *SineWave ,u
 	DAC_DMACmd(FIND_DAC_CHANNEL(Port,Pin), ENABLE);
 }
 
+
+/*****************************************************************************
+INIT_USART_TX
+	* @author	A. Riedinger.
+	* @brief	Inicializa un pin como TX USART.
+	* @returns	void
+	* @param
+		- Port		Puerto del timer a inicializar. Ej: GPIOX.
+		- Pin		Pin del LED. Ej: GPIO_Pin_X
+
+	* @ej
+		- INIT_TIM4(GPIOX, GPIO_Pin_X); //Inicialización del Pin PXXX como TIMER4.
+******************************************************************************/
+void INIT_USART_TX(GPIO_TypeDef* Port, uint16_t Pin)
+{
+	/* System Clocks Configuration:*/
+	/* USART clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+
+	/* GPIO clock enable */
+	RCC_AHB1PeriphClockCmd(FIND_CLOCK(Port), ENABLE);
+
+	/*GPIO Configuration:*/
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	GPIO_InitStructure.GPIO_Pin = Pin;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(Port, &GPIO_InitStructure);
+
+	/* Connect USART pins to AF */
+	GPIO_PinAFConfig(Port, FIND_PINSOURCE(Pin), GPIO_AF_USART2);
+
+	/* USARTx configuration*/
+	  /* USARTx configurada como sigue:
+	        - BaudRate = 9600 baud
+	        - Largo de palabra = 8 Bits
+	        - Un Bit de stop
+	        - Sin paridad
+	        - COntrol de flujo por hardware deshabilitado (RTS and CTS signals)
+	        - Recepcion y transmision habilitadas
+	  */
+	USART_InitTypeDef USART_InitStructure;
+
+	USART_InitStructure.USART_BaudRate = 9600;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure.USART_Parity = USART_Parity_No;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+
+	USART_InitStructure.USART_Mode = USART_Mode_Tx;
+
+	USART_Init(USART2, &USART_InitStructure);
+
+	USART_Cmd(USART2, ENABLE);
+}
+
+
+/*****************************************************************************
+INIT_USART_RX
+	* @author	A. Riedinger.
+	* @brief	Inicializa un pin como RX USART.
+	* @returns	void
+	* @param
+		- Port		Puerto del timer a inicializar. Ej: GPIOX.
+		- Pin		Pin del LED. Ej: GPIO_Pin_X
+
+	* @ej
+		- INIT_TIM4(GPIOX, GPIO_Pin_X); //Inicialización del Pin PXXX como TIMER4.
+******************************************************************************/
+void INIT_USART_RX(GPIO_TypeDef* Port, uint16_t Pin)
+{
+	/* System Clocks Configuration:*/
+	/* USART3 clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+
+	/* GPIO clock enable */
+	RCC_AHB1PeriphClockCmd(FIND_CLOCK(Port), ENABLE);
+
+	/*GPIO Configuration:*/
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	GPIO_InitStructure.GPIO_Pin = Pin;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(Port, &GPIO_InitStructure);
+
+	/* Connect USART pins to AF */
+	GPIO_PinAFConfig(Port, FIND_PINSOURCE(Pin), GPIO_AF_USART2);
+
+	/* USARTx configuration*/
+	  /* USARTx configurada como sigue:
+	        - BaudRate = 9600 baud
+	        - Largo de palabra = 8 Bits
+	        - Un Bit de stop
+	        - Sin paridad
+	        - COntrol de flujo por hardware deshabilitado (RTS and CTS signals)
+	        - Recepcion y transmision habilitadas
+	  */
+	USART_InitTypeDef USART_InitStructure;
+
+	USART_InitStructure.USART_BaudRate = 9600;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure.USART_Parity = USART_Parity_No;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+
+	USART_InitStructure.USART_Mode = USART_Mode_Rx;
+
+	USART_Init(USART2, &USART_InitStructure);
+
+	USART_Cmd(USART2, ENABLE);
+}
+
+
+
 /*------------------------------------------------------------------------------
  FUNCIONES INTERNAS:
 ------------------------------------------------------------------------------*/
