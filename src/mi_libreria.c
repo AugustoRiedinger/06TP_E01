@@ -999,7 +999,7 @@ INIT_USART_TX
 	* @ej
 		- INIT_TIM4(GPIOX, GPIO_Pin_X); //Inicialización del Pin PXXX como TIMER4.
 ******************************************************************************/
-void INIT_USART_TX(GPIO_TypeDef* Port, uint16_t Pin)
+void INIT_USART_TX(GPIO_TypeDef* Port, uint16_t Pin, uint32_t BaudRate)
 {
 	/* System Clocks Configuration:*/
 	/* USART clock enable */
@@ -1032,7 +1032,7 @@ void INIT_USART_TX(GPIO_TypeDef* Port, uint16_t Pin)
 	  */
 	USART_InitTypeDef USART_InitStructure;
 
-	USART_InitStructure.USART_BaudRate = 9600;
+	USART_InitStructure.USART_BaudRate = BaudRate;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -1058,7 +1058,7 @@ INIT_USART_RX
 	* @ej
 		- INIT_TIM4(GPIOX, GPIO_Pin_X); //Inicialización del Pin PXXX como TIMER4.
 ******************************************************************************/
-void INIT_USART_RX(GPIO_TypeDef* Port, uint16_t Pin)
+void INIT_USART_RX(GPIO_TypeDef* Port, uint16_t Pin, uint32_t BaudRate)
 {
 	/* System Clocks Configuration:*/
 	/* USART3 clock enable */
@@ -1091,7 +1091,7 @@ void INIT_USART_RX(GPIO_TypeDef* Port, uint16_t Pin)
 	  */
 	USART_InitTypeDef USART_InitStructure;
 
-	USART_InitStructure.USART_BaudRate = 9600;
+	USART_InitStructure.USART_BaudRate = BaudRate;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
