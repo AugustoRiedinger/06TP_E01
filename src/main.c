@@ -21,11 +21,15 @@ LIBRERIAS:
 /*------------------------------------------------------------------------------
 DEFINICIONES:
 ------------------------------------------------------------------------------*/
+/*Parámetros de configuración del TIM3 para refresco del LCD:*/
+#define Freq 	 4
+#define TimeBase 200e3
+
 /*Pines del RX UART:*/
 #define RX_Port	GPIOA
 #define RX		GPIO_Pin_3
 
-/*Velocidad de transmision:*/
+/*Velocidad de trabajo del UART:*/
 #define BaudRate 9600
 
 /*------------------------------------------------------------------------------
@@ -44,6 +48,9 @@ LCD_2X16_t LCD_2X16[] = {
 /*Variable para almacenamiento de datos recibidos:*/
 char Data;
 
+/*Variable para contar los caracteres:*/
+uint32_t Ch = 0;
+
 int main(void)
 {
 /*------------------------------------------------------------------------------
@@ -57,8 +64,9 @@ CONFIGURACION DEL MICRO:
 	/*Inicializacion del puerto serie en el pin:*/
 	INIT_USART_RX(RX_Port, RX, BaudRate);
 
-	/*Inicializacion UserLED_Green de prueba:*/
-	INIT_DO(GPIOB, GPIO_Pin_0);
+	//Inicialización del TIM3 para refresco del LCD:
+	INIT_TIM3();
+	SET_TIM3(TimeBase, Freq);
 
 /*------------------------------------------------------------------------------
 BUCLE PRINCIPAL:
@@ -71,11 +79,32 @@ BUCLE PRINCIPAL:
 			/*Se guarda lo recibido en la varibale Data:*/
 			Data = USART_ReceiveData(USART2);
 
-			/*Se prende un LED para indicar que se recibió un dato:*/
-			GPIO_SetBits(GPIOB, GPIO_Pin_0);
+			if (Data != '#')
+				Ch++;
 		}
     }
 }
 /*------------------------------------------------------------------------------
 INTERRUPCIONES:
 ------------------------------------------------------------------------------*/
+/*Interrupción por agotamiento de cuenta del TIM3 cada 250mseg (4 Hz):*/
+void TIM3_IRQHandler(void)
+{
+	if (TIM_GetITStatus(TIM3, TIM_IT_CC1) != RESET) {
+		TIM_ClearITPendingBit(TIM3, TIM_IT_CC1);
+
+		/*Buffers para almacenamiento de datos:*/
+		char BufferData[BufferLength];
+		char BufferCh[BufferLength];
+
+		/*Refresco del LCD: */
+		CLEAR_LCD_2x16(LCD_2X16);
+
+		sprintf(BufferData, "%c", Data);
+		sprintf(BufferCh, "%d", Ch);
+
+		/*Mostrar mensaje generico: */
+		PRINT_LCD_2x16(LCD_2X16, 0, 0, BufferData);
+		PRINT_LCD_2x16(LCD_2X16, 0, 1, BufferCh);
+	}
+}
