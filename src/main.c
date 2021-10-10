@@ -30,7 +30,7 @@ DEFINICIONES:
 #define RX		GPIO_Pin_3
 
 /*Velocidad de trabajo del UART:*/
-#define BaudRate 9600
+#define BaudRate 115200
 
 /*------------------------------------------------------------------------------
 VARIABLES GLOBALES:
@@ -50,6 +50,9 @@ char Data;
 
 /*Variable para contar los caracteres:*/
 uint32_t Ch = 0;
+
+/*Variable para contar el tiempo de lectura:*/
+float OpTime = 0;
 
 int main(void)
 {
@@ -79,9 +82,12 @@ BUCLE PRINCIPAL:
 			/*Se guarda lo recibido en la varibale Data:*/
 			Data = USART_ReceiveData(USART2);
 
+			/*Se utiliza un '#' para indicar final de cadena:*/
 			if (Data != '#')
 				Ch++;
 		}
+
+		OpTime = (float) Ch / BaudRate;
     }
 }
 /*------------------------------------------------------------------------------
@@ -96,15 +102,26 @@ void TIM3_IRQHandler(void)
 		/*Buffers para almacenamiento de datos:*/
 		char BufferData[BufferLength];
 		char BufferCh[BufferLength];
+		char BufferOpTime[BufferLength];
 
 		/*Refresco del LCD: */
 		CLEAR_LCD_2x16(LCD_2X16);
 
+		/*Copiar datos a los buffers para imprimir:*/
 		sprintf(BufferData, "%c", Data);
 		sprintf(BufferCh, "%d", Ch);
+		sprintf(BufferOpTime, "%.2f", OpTime);
 
-		/*Mostrar mensaje generico: */
-		PRINT_LCD_2x16(LCD_2X16, 0, 0, BufferData);
-		PRINT_LCD_2x16(LCD_2X16, 0, 1, BufferCh);
+		/*Mensaje para indicar el ultimo caracter leido:*/
+		PRINT_LCD_2x16(LCD_2X16, 0, 0, "Ultimo char: ");
+		PRINT_LCD_2x16(LCD_2X16, 13, 0, BufferData);
+
+		/*Mensaje para indicar la cantidad de caracteres leidos:*/
+		PRINT_LCD_2x16(LCD_2X16, 0, 1, "Cant:");
+		PRINT_LCD_2x16(LCD_2X16, 5, 1, BufferCh);
+
+		/*Mensaje para indicar el tiempo de operacion.*/
+		PRINT_LCD_2x16(LCD_2X16, 10, 1, "T:");
+		PRINT_LCD_2x16(LCD_2X16, 12, 1, BufferOpTime);
 	}
 }
